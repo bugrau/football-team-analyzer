@@ -1,9 +1,10 @@
 // pages/teams/[id].js
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 export default function TeamDetails({ params }) {
-  const { id } = params; // Get the team ID from the URL
+  const { id } = params;
   const [team, setTeam] = useState(null);
   const [error, setError] = useState(null);
 
@@ -38,7 +39,9 @@ export default function TeamDetails({ params }) {
           <ul>
             {team.squad.map((player) => (
               <li key={player.id}>
-                <p>Name: {player.name}</p>
+                <Link href={`/players/${player.id}/matches`}>
+                  {player.name}
+                </Link>
                 <p>Position: {player.position}</p>
                 <p>Shirt Number: {player.shirtNumber}</p>
                 <p>Market Value: {player.marketValue}</p>

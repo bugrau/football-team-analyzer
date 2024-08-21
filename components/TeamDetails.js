@@ -11,7 +11,6 @@ const TeamDetails = ({ teamId }) => {
   useEffect(() => {
     if (teamId) {
       const fetchTeam = async () => {
-        console.log("bir şey");
         try {
           const response = await fetch(`/api/teams/${teamId}`);
           if (!response.ok) {
