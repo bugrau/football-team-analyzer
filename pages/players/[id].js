@@ -1,12 +1,15 @@
+// pages/players/[id]/matches.js
+
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 
 export default function PlayerMatches() {
   const router = useRouter();
   const { id } = router.query;
-  const [matches, setMatches] = useState(null);
+  const [matches, setMatches] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [resultSet, setResultSet] = useState(null);
 
   useEffect(() => {
     if (id) {
@@ -18,7 +21,8 @@ export default function PlayerMatches() {
             throw new Error('Failed to fetch match information');
           }
           const data = await response.json();
-          setMatches(data.matches);  // Assuming the data structure returned has a `matches` key
+          setMatches(data.matches || []);
+          setResultSet(data.resultSet || null); // Store resultSet for additional information
         } catch (err) {
           setError(err.message);
         } finally {
@@ -36,19 +40,25 @@ export default function PlayerMatches() {
     <div>
       <h1>Player Match Information</h1>
       {error && <p>Error: {error}</p>}
-      {matches ? (
+      {matches.length > 0 ? (
         <ul>
-          {matches.map(match => (
+          {matches.map((match) => (
             <li key={match.id}>
-              <p>Match: {match.homeTeam.name} vs {match.awayTeam.name}</p>
-              <p>Date: {new Date(match.utcDate).toLocaleDateString()}</p>
-              <p>Competition: {match.competition.name}</p>
-              <p>Score: {match.score.fullTime.homeTeam} - {match.score.fullTime.awayTeam}</p>
+              <p>Competition: {match.competition?.name || 'N/A'}</p>
+              <p>Season: {match.season?.startDate || 'N/A'} - {match.season?.endDate || 'N/A'}</p>
+              <p>Matchday: {match.matchday || 'N/A'}</p>
+              <p>Home Team: {match.homeTeam?.name || 'N/A'} - Score: {match.score?.fullTime?.home || 'N/A'}</p>
+              <p>Away Team: {match.awayTeam?.name || 'N/A'} - Score: {match.score?.fullTime?.away || 'N/A'}</p>
+              <p>Date: {new Date(match.utcDate).toLocaleDateString() || 'N/A'}</p>
             </li>
           ))}
         </ul>
       ) : (
-        <p>No match information available.</p>
+        resultSet ? (
+          <p>No match information available. Data available from result set: {resultSet.count} matches.</p>
+        ) : (
+          <p>No match information available and no result set information found.</p>
+        )
       )}
     </div>
   );

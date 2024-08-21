@@ -37,7 +37,7 @@ const PersonDetails = ({ personId }) => {
     setLoadingMatches(true);
     setMatchesError(null); // Reset error state
     try {
-      const response = await fetch(`/api/players/${personId}/matches`);
+      const response = await fetch(`/api/persons/${personId}/matches`);
       if (!response.ok) {
         throw new Error('Failed to fetch player matches');
       }
